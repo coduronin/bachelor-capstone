@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - VulnBlog{% endblock %}
+
+{% block content %}
+<h2 style="font-weight:700; color:#4f46e5; margin-bottom:2rem;">Search Results</h2>
+
+<p>Showing results for query: <code>{{ query }}</code></p>
+
+<div class="post-list">
+    {% if results %}
+    <ul>
+        {% for post in results %}
+        <li class="post-item">
+            <a href="{{ url_for('view_post', post_id=post._id) }}">{{ post.title }}</a>
+            <span>by <em>{{ post.author_username }}</em></span>
+            <span> | Category: {{ post.category }}</span>
+            <span> | {{ post.publication_date.strftime('%Y-%m-%d') if post.publication_date else '' }}</span>
+            <p>{{ post.content[:150] }}...</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No results matched your query.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Post - VulnBlog{% endblock %}
+
+{% block container_class %}container-wide{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 style="font-weight:700; color:#4f46e5; margin-bottom:1.5rem;">Create New Post</h2>
+    <form method="POST" action="{{ url_for('create_post') }}" class="form-grid">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" id="category" name="category" placeholder="e.g. Technology, Travel" required>
+        </div>
+        <div class="form-group full-width">
+            <label for="content">Content</label>
+            <textarea id="content" name="content" rows="15" required
+                style="font-family: monospace; font-size: 1rem;"></textarea>
+        </div>
+        <div class="form-actions full-width">
+            <button type="submit" class="btn">Create Post</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

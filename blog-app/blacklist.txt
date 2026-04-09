@@ -1,0 +1,6 @@
+crime
+kill
+terror
+bomb
+murder
+drugs

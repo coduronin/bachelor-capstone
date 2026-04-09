@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - VulnBlog{% endblock %}
+
+{% block container_class %}container-wide{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Edit Profile</h2>
+    <form method="POST" action="{{ url_for('profile') }}" class="form-grid">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" pattern="[^@]+@[^@]+\.[^@]+"
+                title="Email must contain a valid domain (e.g., user@example.com)" required>
+        </div>
+        <div class="form-group">
+            <label for="security_question">Security Question</label>
+            <select id="security_question" name="security_question" required>
+                <option value="What is your mother's maiden name?" {% if
+                    user.security_question=="What is your mother's maiden name?" %}selected{% endif %}>What is your
+                    mother's maiden name?</option>
+                <option value="What was the name of your first pet?" {% if
+                    user.security_question=="What was the name of your first pet?" %}selected{% endif %}>What was the
+                    name of your first pet?</option>
+                <option value="What is the name of the city where you were born?" {% if
+                    user.security_question=="What is the name of the city where you were born?" %}selected{% endif %}>
+                    What is the name of the city where you were born?</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="security_answer">Security Answer (Update to change)</label>
+            <input type="text" id="security_answer" name="security_answer" placeholder="Enter new answer to update">
+        </div>
+        <div class="form-group">
+            <label for="new_password">New Password</label>
+            <input type="password" id="new_password" name="new_password" placeholder="Leave blank to keep current">
+        </div>
+        <div class="form-group">
+            <label for="current_password" style="color: #d9534f;">Current Password (Required)</label>
+            <input type="password" id="current_password" name="current_password" required>
+        </div>
+
+        <div class="form-actions full-width">
+            <button type="submit" class="btn">Update Profile</button>
+        </div>
+    </form>
+
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+        <h3 style="color: #ef4444;">Danger Zone</h3>
+        <p>Once you delete your account, there is no going back. Please be certain.</p>
+        <button onclick="document.getElementById('deleteModal').style.display='block'" class="btn"
+            style="background-color: #ef4444; margin-top: 10px;">Delete Account</button>
+    </div>
+</div>
+
+<div id="deleteModal"
+    style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+    <div
+        style="background-color: var(--color-bg); margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0;">Confirm Account Deletion</h3>
+        <p>Please enter your password to confirm account deletion.</p>
+        <form method="POST" action="{{ url_for('delete_account') }}">
+            <div class="form-group">
+                <label for="delete_password_confirm">Password</label>
+                <input type="password" id="delete_password_confirm" name="password" required
+                    style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div style="margin-top: 20px; text-align: right;">
+                <button type="button" onclick="document.getElementById('deleteModal').style.display='none'" class="btn"
+                    style="background-color: #6b7280; margin-right: 10px;">Cancel</button>
+                <button type="submit" class="btn" style="background-color: #ef4444;">Confirm Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

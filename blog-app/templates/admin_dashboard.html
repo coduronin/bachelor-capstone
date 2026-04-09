@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - VulnBlog{% endblock %}
+
+{% block container_class %}container-wide{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h2 class="section-title">Admin Dashboard</h2>
+    <div class="admin-actions">
+        <!-- Actions moved to Danger Zone -->
+    </div>
+</div>
+
+<!-- Stats Overview -->
+<div class="stats-grid">
+    <div class="stat-card" onclick="switchTab('users')" style="cursor: pointer; transition: transform 0.2s;"
+        onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <div class="stat-icon user-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+            <h3>Total Users</h3>
+            <p class="stat-number">{{ users|length }}</p>
+        </div>
+    </div>
+    <div class="stat-card" onclick="switchTab('posts')" style="cursor: pointer; transition: transform 0.2s;"
+        onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <div class="stat-icon post-icon"><i class="fas fa-file-alt"></i></div>
+        <div class="stat-info">
+            <h3>Total Posts</h3>
+            <p class="stat-number">{{ posts|length }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="admin-grid-layout">
+    <!-- Users Section (Tab) -->
+    <div id="users-tab" class="tab-content active">
+        <div class="admin-card">
+            <div class="card-header">
+                <h3>User Management</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="admin-table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('users-table', 0)" style="cursor:pointer;">Username <i
+                                    class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('users-table', 1)" style="cursor:pointer;">Email <i
+                                    class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('users-table', 2)" style="cursor:pointer;">Joined Date <i
+                                    class="fas fa-sort"></i></th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="avatar-circle">{{ user.username[0] | upper }}</div>
+                                    <span>{{ user.username }}</span>
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
+                            <td>
+                                {% if user.is_admin %}
+                                <span class="badge badge-admin">Admin</span>
+                                {% else %}
+                                <span class="badge badge-user">User</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not user.is_admin %}
+                                <a href="{{ url_for('admin_delete_user', user_id=user._id) }}"
+                                    onclick="return confirm('Delete user {{ user.username }}?');"
+                                    class="btn-icon delete" title="Delete User">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Danger Zone was here, moving inside -->
+
+        <!-- Danger Zone -->
+        <div class="admin-card danger-zone">
+            <div class="card-header danger-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+            </div>
+            <div class="danger-content">
+                <p>These actions are destructive and cannot be undone.</p>
+                <form action="{{ url_for('admin_delete_all_users') }}" method="POST"
+                    onsubmit="return confirm('WARNING: This will delete ALL users except yourself. This action cannot be undone. Are you sure?');">
+                    <button type="submit" class="btn btn-danger-glow"><i class="fas fa-trash-alt"></i> Nuke All
+                        Users</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> <!-- End Danger Zone -->
+</div> <!-- End Users Tab -->
+
+<!-- Posts Section (Tab) -->
+<div id="posts-tab" class="tab-content">
+    <div class="admin-card">
+        <div class="card-header">
+            <h3>Recent Posts</h3>
+        </div>
+        <div class="table-responsive">
+            <table class="admin-table" id="posts-table">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('posts-table', 0)" style="cursor:pointer;">Title <i
+                                class="fas fa-sort"></i></th>
+                        <th onclick="sortTable('posts-table', 1)" style="cursor:pointer;">Author <i
+                                class="fas fa-sort"></i></th>
+                        <th onclick="sortTable('posts-table', 2)" style="cursor:pointer;">Updated <i
+                                class="fas fa-sort"></i></th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <td><a href="{{ url_for('view_post', post_id=post._id) }}" class="table-link">{{ post.title
+                                }}</a></td>
+                        <td>{{ post.author_username }}</td>
+                        <td>{{ post.updated_at.strftime('%Y-%m-%d') if post.updated_at else
+                            (post.publication_date.strftime('%Y-%m-%d') if post.publication_date else 'N/A') }}</td>
+                        <td>
+                            <a href="{{ url_for('admin_delete_post', post_id=post._id) }}"
+                                onclick="return confirm('Delete this post?');" class="btn-icon delete"
+                                title="Delete Post">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> <!-- End Posts Tab -->
+</div>
+
+<script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.style.display = 'none';
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show active tab
+        document.getElementById(tabName + '-tab').style.display = 'block';
+
+        // Find button that calls this function with tabName and add active class
+        // Simple way: iterate buttons and check onclick attribute text equivalent
+        // Or cleaner: pass 'this' to function. Let's rely on text content for now or simple indexing.
+        const buttons = document.querySelectorAll('.tab-btn');
+        if (tabName === 'users') buttons[0].classList.add('active');
+        if (tabName === 'posts') buttons[1].classList.add('active');
+    }
+
+    function sortTable(tableId, n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById(tableId);
+        switching = true;
+        // Set the sorting direction to ascending:
+        dir = "asc";
+        /* Make a loop that will continue until
+        no switching has been done: */
+        while (switching) {
+            // Start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /* Loop through all table rows (except the
+            first, which contains table headers): */
+            for (i = 1; i < (rows.length - 1); i++) {
+                // Start by saying there should be no switching:
+                shouldSwitch = false;
+                /* Get the two elements you want to compare,
+                one from current row and one from the next: */
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                var xContent = x.textContent || x.innerText;
+                var yContent = y.textContent || y.innerText;
+
+                /* Check if the two rows should switch place,
+                based on the direction, asc or desc: */
+                if (dir == "asc") {
+                    if (xContent.toLowerCase() > yContent.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (xContent.toLowerCase() < yContent.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                /* If a switch has been marked, make the switch
+                and mark that a switch has been done: */
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                // Each time a switch is done, increase this count by 1:
+                switchcount++;
+            } else {
+                /* If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again. */
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+
+    // Initialize default tab
+    switchTab('users');
+</script>
+{% endblock %}

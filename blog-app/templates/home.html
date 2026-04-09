@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Home - VulnBlog{% endblock %}
+
+{% block container_class %}container-wide{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1>Welcome to <span class="gradient-text">VulnBlog</span></h1>
+        <p>Explore the latest insights, stories, and updates from our community.</p>
+    </div>
+</section>
+
+<h2 class="section-title">Latest Posts</h2>
+
+<div class="post-grid">
+    {% if posts %}
+    {% for post in posts %}
+    <article class="post-card">
+        <div class="post-card-header">
+            <span class="category-pill">{{ post.category }}</span>
+        </div>
+        <div class="post-card-body">
+            <h3 class="post-title"><a href="{{ url_for('view_post', post_id=post._id) }}">{{ post.title }}</a></h3>
+            <p class="post-meta">
+                <span><i class="fas fa-user"></i> {{ post.author_username }}</span>
+                <span><i class="fas fa-calendar-alt"></i> {{ post.publication_date.strftime('%b %d, %Y') if
+                    post.publication_date else '' }}</span>
+            </p>
+            <p class="post-excerpt">{{ post.content[:100] }}...</p>
+        </div>
+        <div class="post-card-footer">
+            <a href="{{ url_for('view_post', post_id=post._id) }}" class="btn-read-more">Read Article <i
+                    class="fas fa-arrow-right"></i></a>
+        </div>
+    </article>
+    {% endfor %}
+    {% else %}
+    <div class="no-posts">
+        <p>No posts found. Be the first to write something!</p>
+        <a href="{{ url_for('create_post') }}" class="btn">Create Post</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

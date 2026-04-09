@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - VulnBlog{% endblock %}
+
+{% block container_class %}container-wide{% endblock %}
+
+{% block content %}
+<div class="dashboard-header"
+    style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <h2 class="section-title" style="margin-bottom: 0;">My Blogs</h2>
+    <a href="{{ url_for('create_post') }}" class="btn">Create New Post</a>
+</div>
+
+<div class="post-grid">
+    {% if posts %}
+    {% for post in posts %}
+    <article class="post-card">
+        <div class="post-card-header">
+            <span class="category-pill">{{ post.category }}</span>
+        </div>
+        <div class="post-card-body">
+            <h3 class="post-title"><a href="{{ url_for('view_post', post_id=post._id) }}">{{ post.title }}</a></h3>
+            <p class="post-meta">
+                <span><i class="fas fa-calendar-alt"></i> {{ post.publication_date.strftime('%b %d, %Y') if
+                    post.publication_date else '' }}</span>
+            </p>
+            <p class="post-excerpt">{{ post.content[:100] }}...</p>
+        </div>
+        <div class="post-card-footer"
+            style="padding: 1.5rem; border-top: 1px solid #2c2f34; display: flex; gap: 1rem; justify-content: flex-end;">
+            <a href="{{ url_for('edit_post', post_id=post._id) }}" class="btn-icon" title="Edit Post"
+                style="color: #60a5fa;">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{{ url_for('delete_post', post_id=post._id) }}" class="btn-icon delete" title="Delete Post"
+                onclick="return confirm('Are you sure you want to delete this post?');">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </article>
+    {% endfor %}
+    {% else %}
+    <div class="no-posts"
+        style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: var(--color-bg-alt); border-radius: 16px;">
+        <p style="font-size: 1.2rem; color: #9ca3af; margin-bottom: 2rem;">You haven't created any posts yet.</p>
+        <a href="{{ url_for('create_post') }}" class="btn">Create Post</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
