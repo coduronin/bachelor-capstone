@@ -21,4 +21,3 @@ For this project, I built a security testing environment and custom tools to aut
 * **Data:** A comprehensive dataset of pentest reports, host records, and vulnerability logs in CSV and JSON formats.
 
 ---
-*Created by Izzat Mammadzada | Mathematical Engineering*
